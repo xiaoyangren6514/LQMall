@@ -1,4 +1,4 @@
-# lqmall
+# LQMall
 
 ## Project setup
 ```
