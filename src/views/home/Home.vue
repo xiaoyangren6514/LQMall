@@ -3,12 +3,21 @@
     <nav-bar class="home-nav">
       <div slot="center">购物街</div>
     </nav-bar>
-    <home-banner-swiper :bannerList="bannerList" />
-    <home-recommend :recommendList="recommendList"></home-recommend>
-    <feature-view />
-    <tab-control class="tab-control" :titles="['流行','新款','精选']" @tabClick="tabClick" />
-    <goods-list :goodsList="showGoods" />
+    <scroll class="home-scroller">
+      <home-banner-swiper :bannerList="bannerList" />
+      <home-recommend :recommendList="recommendList"></home-recommend>
+      <feature-view />
+      <tab-control class="tab-control" :titles="['流行','新款','精选']" @tabClick="tabClick" />
+      <goods-list :goodsList="showGoods" />
+    </scroll>
     <ul>
+      <li>列表2</li>
+      <li>列表</li>
+      <li>列表w</li>
+      <li>列表</li>
+      <li>列表</li>
+      <li>列表</li>
+      <li>列表234</li>
       <li>列表</li>
       <li>列表</li>
       <li>列表</li>
@@ -30,18 +39,11 @@
       <li>列表</li>
       <li>列表</li>
       <li>列表</li>
+      <li>列表5</li>
       <li>列表</li>
       <li>列表</li>
-      <li>列表</li>
-      <li>列表</li>
-      <li>列表</li>
-      <li>列表</li>
-      <li>列表</li>
-      <li>列表</li>
-      <li>列表</li>
-      <li>列表</li>
-      <li>列表</li>
-      <li>列表</li>
+      <li>列表f</li>
+      <li>列表d</li>
       <li>列表</li>
       <li>列表</li>
       <li>列表</li>
@@ -117,6 +119,7 @@
 import NavBar from "components/common/navbar/NavBar";
 import TabControl from "components/contents/tabcontrol/TabControl";
 import GoodsList from "components/contents/goods/GoodsList";
+import Scroll from "components/common/scroll/Scroll";
 
 import { getHomeMultiData, getHomeCategoryData } from "network/home.js";
 import HomeBannerSwiper from "./childComps/HomeSwiper";
@@ -152,7 +155,8 @@ export default {
     HomeRecommend,
     FeatureView,
     TabControl,
-    GoodsList
+    GoodsList,
+    Scroll
   },
   created() {
     getHomeMultiData().then(res => {
@@ -160,9 +164,9 @@ export default {
       this.bannerList = res.data.banner.list;
       this.recommendList = res.data.recommend.list;
     });
-    this.getHomeCategotryData('pop');
-    this.getHomeCategotryData('new');
-    this.getHomeCategotryData('sell');
+    this.getHomeCategotryData("pop");
+    this.getHomeCategotryData("new");
+    this.getHomeCategotryData("sell");
   },
   methods: {
     getHomeCategotryData(type) {
@@ -197,6 +201,8 @@ export default {
 <style  scoped>
 #home {
   padding-top: 44px;
+  height: 100vh;
+  position: relative;
 }
 
 .home-nav {
@@ -215,4 +221,18 @@ export default {
   top: 44px;
   z-index: 9;
 }
+.home-scroller {
+  /* height: 300px; */
+  /* overflow: hidden; */
+  position: absolute;
+  top: 44px;
+  bottom: 49px;
+  left: 0;
+  right: 0;
+}
+/* .content {
+  height: calc(100%-93px);
+  overflow: hidden;
+  margin-top: 44px;
+} */
 </style>
