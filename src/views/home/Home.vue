@@ -1,117 +1,26 @@
 <template>
   <div id="home">
+    <!-- 标题栏 -->
     <nav-bar class="home-nav">
       <div slot="center">购物街</div>
     </nav-bar>
-    <scroll class="home-scroller">
+    <!-- 内如区域 -->
+    <scroll
+      class="content"
+      ref="scroll"
+      :probe-type="3"
+      @scroll="contentScroll"
+      :pull-up-load="true"
+      @scrollToEnd="loadMore"
+    >
       <home-banner-swiper :bannerList="bannerList" />
       <home-recommend :recommendList="recommendList"></home-recommend>
       <feature-view />
       <tab-control class="tab-control" :titles="['流行','新款','精选']" @tabClick="tabClick" />
       <goods-list :goodsList="showGoods" />
     </scroll>
-    <ul>
-      <li>列表2</li>
-      <li>列表</li>
-      <li>列表w</li>
-      <li>列表</li>
-      <li>列表</li>
-      <li>列表</li>
-      <li>列表234</li>
-      <li>列表</li>
-      <li>列表</li>
-      <li>列表</li>
-      <li>列表</li>
-      <li>列表</li>
-      <li>列表</li>
-      <li>列表</li>
-      <li>列表</li>
-      <li>列表</li>
-      <li>列表</li>
-      <li>列表</li>
-      <li>列表</li>
-      <li>列表</li>
-      <li>列表</li>
-      <li>列表</li>
-      <li>列表</li>
-      <li>列表</li>
-      <li>列表</li>
-      <li>列表</li>
-      <li>列表</li>
-      <li>列表</li>
-      <li>列表5</li>
-      <li>列表</li>
-      <li>列表</li>
-      <li>列表f</li>
-      <li>列表d</li>
-      <li>列表</li>
-      <li>列表</li>
-      <li>列表</li>
-      <li>列表</li>
-      <li>列表</li>
-      <li>列表</li>
-      <li>列表</li>
-      <li>列表</li>
-      <li>列表</li>
-      <li>列表</li>
-      <li>列表</li>
-      <li>列表</li>
-      <li>列表</li>
-      <li>列表</li>
-      <li>列表</li>
-      <li>列表</li>
-      <li>列表</li>
-      <li>列表</li>
-      <li>列表</li>
-      <li>列表</li>
-      <li>列表</li>
-      <li>列表</li>
-      <li>列表</li>
-      <li>列表</li>
-      <li>列表</li>
-      <li>列表</li>
-      <li>列表</li>
-      <li>列表</li>
-      <li>列表</li>
-      <li>列表</li>
-      <li>列表</li>
-      <li>列表</li>
-      <li>列表</li>
-      <li>列表</li>
-      <li>列表</li>
-      <li>列表</li>
-      <li>列表</li>
-      <li>列表</li>
-      <li>列表</li>
-      <li>列表</li>
-      <li>列表</li>
-      <li>列表</li>
-      <li>列表</li>
-      <li>列表</li>
-      <li>列表</li>
-      <li>列表</li>
-      <li>列表</li>
-      <li>列表</li>
-      <li>列表</li>
-      <li>列表</li>
-      <li>列表</li>
-      <li>列表</li>
-      <li>列表</li>
-      <li>列表</li>
-      <li>列表</li>
-      <li>列表</li>
-      <li>列表</li>
-      <li>列表</li>
-      <li>列表</li>
-      <li>列表</li>
-      <li>列表</li>
-      <li>列表</li>
-      <li>列表</li>
-      <li>列表</li>
-      <li>列表</li>
-      <li>列表</li>
-      <li>列表</li>
-    </ul>
+    <!-- 返回顶部 -->
+    <back-top @click.native="topClick" v-show="showBackTop"></back-top>
   </div>
 </template>
 
@@ -120,6 +29,7 @@ import NavBar from "components/common/navbar/NavBar";
 import TabControl from "components/contents/tabcontrol/TabControl";
 import GoodsList from "components/contents/goods/GoodsList";
 import Scroll from "components/common/scroll/Scroll";
+import BackTop from "components/contents/backTop/BackTop";
 
 import { getHomeMultiData, getHomeCategoryData } from "network/home.js";
 import HomeBannerSwiper from "./childComps/HomeSwiper";
@@ -133,6 +43,7 @@ export default {
       bannerList: [],
       recommendList: [],
       currentType: "pop",
+      showBackTop: false,
       goods: {
         pop: {
           page: 0,
@@ -156,7 +67,8 @@ export default {
     FeatureView,
     TabControl,
     GoodsList,
-    Scroll
+    Scroll,
+    BackTop
   },
   created() {
     getHomeMultiData().then(res => {
@@ -189,6 +101,19 @@ export default {
           this.currentType = "sell";
           break;
       }
+    },
+    topClick() {
+      // 不建议直接调用，可以在scroll中封装
+      // this.$refs.scroll.scroll.scrollTo(0, 0, 500);
+      this.$refs.scroll.scrollTo(0, 0, 500);
+    },
+    contentScroll(position) {
+      this.showBackTop = -position.y > 1000;
+    },
+    loadMore() {
+      console.log("开始加载更多");
+      this.getHomeCategotryData(this.currentType)
+      this.$refs.scroll.finishPullUp()
     }
   },
   computed: {
@@ -221,18 +146,12 @@ export default {
   top: 44px;
   z-index: 9;
 }
-.home-scroller {
-  /* height: 300px; */
-  /* overflow: hidden; */
+.content {
+  overflow: hidden;
   position: absolute;
   top: 44px;
   bottom: 49px;
   left: 0;
   right: 0;
 }
-/* .content {
-  height: calc(100%-93px);
-  overflow: hidden;
-  margin-top: 44px;
-} */
 </style>
