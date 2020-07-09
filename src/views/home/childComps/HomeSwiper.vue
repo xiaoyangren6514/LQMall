@@ -2,7 +2,7 @@
   <swiper>
     <swiper-item v-for="(item, index) in bannerList" :key="index">
       <a :href="item.link">
-        <img :src="item.image" alt />
+        <img :src="item.image" alt @load="imageLoad" />
       </a>
     </swiper-item>
   </swiper>
@@ -16,11 +16,21 @@ export default {
     bannerList: Array
   },
   data() {
-    return {};
+    return {
+      isFirstLoad: false
+    };
   },
   components: {
     Swiper,
     SwiperItem
+  },
+  methods: {
+    imageLoad() {
+      if (!this.isFirstLoad) {
+        this.$emit("swiperImageLoad");
+        this.isFirstLoad = true;
+      }
+    }
   }
 };
 </script>

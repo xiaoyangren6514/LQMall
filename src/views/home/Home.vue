@@ -4,6 +4,12 @@
     <nav-bar class="home-nav">
       <div slot="center">购物街</div>
     </nav-bar>
+    <tab-control
+      ref="tabControl2"
+      :titles="['流行','新款','精选']"
+      @tabClick="tabClick"
+      v-show="isTabFixed"
+    />
     <!-- 内如区域 -->
     <scroll
       class="content"
@@ -13,10 +19,10 @@
       :pull-up-load="true"
       @scrollToEnd="loadMore"
     >
-      <home-banner-swiper :bannerList="bannerList" />
+      <home-banner-swiper :bannerList="bannerList" @swiperImageLoad="swiperImageLoad" />
       <home-recommend :recommendList="recommendList"></home-recommend>
       <feature-view />
-      <tab-control class="tab-control" :titles="['流行','新款','精选']" @tabClick="tabClick" />
+      <tab-control ref="tabControl" :titles="['流行','新款','精选']" @tabClick="tabClick" />
       <goods-list :goodsList="showGoods" />
     </scroll>
     <!-- 返回顶部 -->
@@ -36,10 +42,14 @@ import HomeBannerSwiper from "./childComps/HomeSwiper";
 import HomeRecommend from "./childComps/HomeRecommend";
 import FeatureView from "./childComps/FeatureView";
 
+// import { debounce } from "@/common/utils.js";
+
 export default {
   name: "Home",
   data() {
     return {
+      tabTopoffSet: 0,
+      isTabFixed: false,
       bannerList: [],
       recommendList: [],
       currentType: "pop",
@@ -57,7 +67,8 @@ export default {
           page: 0,
           list: []
         }
-      }
+      },
+      saveY: 0
     };
   },
   components: {
@@ -69,6 +80,14 @@ export default {
     GoodsList,
     Scroll,
     BackTop
+  },
+  mounted() {
+    // 图片加载完成监听
+    // const refresh = debounce(this.$refs.scroll.scrollTo, 500);
+    this.$bus.$on("imageFinishLoad", () => {
+      // console.log("imageFinishLoad");
+      // refresh();
+    });
   },
   created() {
     getHomeMultiData().then(res => {
@@ -84,7 +103,7 @@ export default {
     getHomeCategotryData(type) {
       const page = this.goods[type].page + 1;
       getHomeCategoryData(type, page).then(res => {
-        console.log(res);
+        // console.log(res);
         this.goods[type].list.push(...res.data.list);
         this.goods[type].page = page;
       });
@@ -101,6 +120,8 @@ export default {
           this.currentType = "sell";
           break;
       }
+      this.$refs.tabControl2.currentIndex = index;
+      this.$refs.tabControl.currentIndex = index;
     },
     topClick() {
       // 不建议直接调用，可以在scroll中封装
@@ -108,18 +129,35 @@ export default {
       this.$refs.scroll.scrollTo(0, 0, 500);
     },
     contentScroll(position) {
+      // 判断返回顶部是否出现
       this.showBackTop = -position.y > 1000;
+      // 判断tab-control是否固定
+      this.isTabFixed = -position.y > this.tabTopoffSet;
     },
     loadMore() {
       console.log("开始加载更多");
-      this.getHomeCategotryData(this.currentType)
-      this.$refs.scroll.finishPullUp()
+      this.getHomeCategotryData(this.currentType);
+      this.$refs.scroll.finishPullUp();
+    },
+    swiperImageLoad() {
+      this.tabTopoffSet = this.$refs.tabControl.$el.offsetTop;
+      // console.log("tabTopoffSet:", this.tabTopoffSet);
     }
+  },
+  activated() {
+    this.$refs.scroll.scrollTo(0, this.saveY, 0);
+    this.$refs.scroll.refresh();
+  },
+  deactivated() {
+    this.saveY = this.$refs.scroll.scroll.y;
   },
   computed: {
     showGoods() {
       return this.goods[this.currentType].list;
     }
+  },
+  destroyed() {
+    console.log("destoryd");
   }
 };
 </script>
