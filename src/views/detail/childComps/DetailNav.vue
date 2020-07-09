@@ -1,9 +1,9 @@
 <template>
   <div class="detail">
     <nav-bar>
-        <div slot="left" @click="backClick">
-            <img src="~assets/images/common/back.svg" alt="" class="img-back">
-        </div>
+      <div slot="left" @click="backClick">
+        <img src="~assets/images/common/back.svg" alt class="img-back" />
+      </div>
       <div slot="center" class="title">
         <div
           v-for="(item, index) in titles"
@@ -18,6 +18,7 @@
 </template>
 
 <script>
+
 import NavBar from "components/common/navbar/NavBar";
 
 export default {
@@ -31,13 +32,13 @@ export default {
   components: {
     NavBar
   },
-  methods:{
-      itemClick(index){
-          this.currentIndex = index
-      },
-      backClick(){
-          this.$router.back()
-      }
+  methods: {
+    itemClick(index) {
+      this.currentIndex = index;
+    },
+    backClick() {
+      this.$router.back();
+    }
   }
 };
 </script>
@@ -54,8 +55,8 @@ export default {
 .active {
   color: var(--color-tint);
 }
-.img-back{
-    margin-left: 12px;
-    margin-top: 12px;
+.img-back {
+  margin-left: 12px;
+  margin-top: 12px;
 }
 </style>>
