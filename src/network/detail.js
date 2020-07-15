@@ -9,6 +9,7 @@ export function getDetailData(id) {
     })
 }
 
+// 商品基本信息
 export class Goods {
     constructor(itemInfo, columns, services) {
         this.title = itemInfo.title;
@@ -23,3 +24,15 @@ export class Goods {
         this.nowPrice = itemInfo.highNowPrice;
     }
 }
+
+// 店铺数据
+export class Shop {
+    constructor(shopInfo) {
+      this.logo = shopInfo.shopLogo;
+      this.name = shopInfo.name;
+      this.fans = shopInfo.cFans;
+      this.sells = shopInfo.cSells;
+      this.score = shopInfo.score;
+      this.goodsCount = shopInfo.cGoods;
+    }
+  }
